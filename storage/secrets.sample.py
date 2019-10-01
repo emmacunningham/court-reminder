@@ -8,7 +8,7 @@ db_tablename = "tablaname"
 db_connection_string = "Driver={driver};Server={server};Database={database};Uid={db_username};Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;".format(server=db_server, driver=_driver, database=db_name, db_username=db_username, password=db_password)
 
 # Azure Table
-table_name = 'tablename'
+table_name = 'courtreminder' # can use this value
 storage_account = 'account'
 table_connection_string = 'connectionstring'
 
