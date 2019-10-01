@@ -13,7 +13,10 @@ storage_account = 'account'
 table_connection_string = 'connectionstring'
 
 # Used for azure blob store, where we upload raw files.
-blob_accountname = "court" # not mentioned in readme, but appears to be used
+# blob_accountname is used in server/admin_app and storage/filestorage, passed as an argument to BlockBlobStorage
+# Per the documentation here https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python#configure-your-storage-connection-string
+# it appears that this corresponds to the storage account name, which is also stored under the variable storage_account
+blob_accountname = "court" # not mentioned in readme, but appears to be used (maybe storage_account name?)
 blob_key = "mah_blob"
 blob_container = "somecontainer"
 local_tmp_dir = "/tmp"
