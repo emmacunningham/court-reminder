@@ -1,20 +1,20 @@
 All info at: https://github.com/guyrt/court-reminder/
 
 ## court-reminder - what it does
-Calling things and transcribing.  
+Calling things and transcribing.
 
 Here we have instructions for running the program on a local machine and on an Azure VM.
 
 # Install github on your computer
 go to www.github.com in order to install git
 
-# Running on local machine 
+# Running on local machine
 ## Clone the court reminder repository
-Open a terminal on your computer.  
+Open a terminal on your computer.
 Navigate to the directory you would want your new directory to be:
 e.g. cd C:\Users\yourname\
 Then clone github repo:
-Go to https://github.com/guyrt/court-reminder/ and click on the green Clone or download button.  Copy the url. 
+Go to https://github.com/guyrt/court-reminder/ and click on the green Clone or download button.  Copy the url.
 In your terminal, type:
 git clone &lt; url &gt;
 
@@ -43,31 +43,31 @@ download sox from their website
 brew install sox
 
 ## Fill in secrets files (these contain API keys, lists of numbers for which you want info):
-You will need to set up accounts with the various services that we use (Twilio, Google Clound, Azure Storage table).  
+You will need to set up accounts with the various services that we use (Twilio, Google Clound, Azure Storage table).
 You will then need to fill in the various secrets files with your credentials for these accounts.  Copy secrets sample and then fill in the blanks.  (cp secrets.sample.py secrets.py)
 The secrets files are located in the following folders:
 
   1. Call -- ~\CourtHearings\court-reminder\call\secrets.py
   To fill out this information, you first need a Twilio account. Set up one at www.twilio.com.  Then edit the fields in the secret file: ~\CourtHearings\court-reminder\call\secrets.py
-  Your AccountSid and AuthToken can be found on your Account Dashboard. 
- 
+  Your AccountSid and AuthToken can be found on your Account Dashboard.
+
   2. Storage -- ~\CourtHearings\court-reminder\storage\secrets.py
-  We use an Azure storage account for this.  Here are instructions on how to set up an Azure storage account. 
+  We use an Azure storage account for this.  Here are instructions on how to set up an Azure storage account.
   https://docs.microsoft.com/en-us/azure/storage/storage-create-storage-account#create-a-storage-account
   The deployment model is resource manager, and you will want to create a General Purpose with performance tier standard.  Store the name of the storage_account in the storage_account variable in the secrets file.  Go to the access keys tab, and set Key1 in the variables blob_key and table_connection_string.
-Next, go to "blob store" from overview and create a container. Store the name of this container in the variable blob_container. 
-Next, set table_name = "courtreminder" in secrets.py. Our code will make the table for you. 
+Next, go to "blob store" from overview and create a container. Store the name of this container in the variable blob_container.
+Next, set table_name = "courtreminder" in secrets.py. Our code will make the table for you.
 Note that the db_* variables shouldn't be used
-  
+
   3. Transcription  ~\CourtHearings\court-reminder\transcribe\secrets.py
   Here are instructions to get started with the google cloud speech API here:
   https://cloud.google.com/speech/docs/getting-started
-  Create a new project.  Give it a name. 
+  Create a new project.  Give it a name.
   Go to API manager, then click on credentials
   Click create credentials, and choose Service Account Key
-  Choose your project as the service account and then download the json.  
+  Choose your project as the service account and then download the json.
   Copy the json into secrets.py. Don't do anything for the Bing speech recognition credentials (we used to use Bing, then we switched to Google).  You don't need to enter anything in the preferred phrases line either.
-  
+
 ## Run
 Three parts:
 1. Inserting the AINs into the database.
@@ -81,7 +81,7 @@ Three parts:
 ## Accessing the admin:
 Type &lt; server_ip &gt; :8080/admin into your web browser
 
-# Running on Azure VM 
+# Running on Azure VM
 
 This is optional.  Only follow these instructions if you would prefer to run this program on a virtual machine instead of on your local computer.
 
@@ -102,7 +102,7 @@ In overview, you can get your public IP.
 Go to network interfaces
 Retrieve name of security group
 Search for name of security roup
-Add new rule to inbound security rules 
+Add new rule to inbound security rules
 Port range 8080. Name httpaccess
 Password for this will be in the secrets.py file in the server folder in the repo
 
@@ -112,9 +112,9 @@ ssh &lt; username &gt; @ &lt; IP address &gt;
 ## Clone the court reminder repository
 git clone &lt; court reminder repo &gt;
 
-## install python 3   
+## install python 3
 sudo apt-get update
-sudo apt-get install python-dev build-essential libssl-dev libffi-dev python-pip3 -y
+sudo apt-get install python-dev build-essential libssl-dev libffi-dev python3-pip -y
 
 ## install modules that are needed
 sudo pip3 install -r requirements.txt
