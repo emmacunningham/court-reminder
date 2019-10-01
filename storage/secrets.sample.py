@@ -13,7 +13,7 @@ storage_account = 'account'
 table_connection_string = 'connectionstring'
 
 # Used for azure blob store, where we upload raw files.
-blob_accountmae = "court"
+blob_accountname = "court"
 blob_key = "mah_blob"
 blob_container = "somecontainer"
 local_tmp_dir = "/tmp"
