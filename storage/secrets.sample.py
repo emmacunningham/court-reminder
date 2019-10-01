@@ -18,5 +18,5 @@ blob_key = "mah_blob"
 blob_container = "somecontainer"
 local_tmp_dir = "/tmp"
 
-# sentry
+# sentry (nothing in the readme about this, but it's used in extract_runner.py and runners.py)
 sentry_dsn = ''
