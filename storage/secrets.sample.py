@@ -1,4 +1,4 @@
-# SQL Server
+# SQL Server (per readme, no longer used and not needed)
 db_name = "database"
 db_username = "usre@machine"
 db_password = "americawasgreatalready"
