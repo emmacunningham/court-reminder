@@ -35,6 +35,7 @@ brew install python3
 
 ## install modules that are needed
 sudo pip3 install -r requirements.txt
+
 ### For ubuntu
 sudo apt-get install sox -y
 ### For windows
@@ -69,11 +70,15 @@ Note that the db_* variables shouldn't be used
   Copy the json into secrets.py. Don't do anything for the Bing speech recognition credentials (we used to use Bing, then we switched to Google).  You don't need to enter anything in the preferred phrases line either.
 
 ## Run
-Three parts:
+_IMPORTANT_: You must run step #1 at least once first in order to create the Azure table.
+
+_N.B._: When running locally, you can (and may need to) change the servers to single-threaded.  To do that, change `processes` value to 1 in `start_server.py`
+
+Three parts: (on Ubuntu if you have multiple python versions, you may need to run with `python3`)
 1. Inserting the AINs into the database.
 - Have a file with one AIN per line.  Run insert.py &lt; filename &gt; .
 2. Running the runners (transcribing, calling, extracting)
-  - python ./court-reminder/runners.py
+  - python ./runners.py
 3. Running the servers (twiml server, admin server)
   - python start_server.py --twilio_prod
   - python start_server.py --admin_prod
