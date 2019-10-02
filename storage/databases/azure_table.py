@@ -2,14 +2,14 @@ from datetime import datetime
 
 from azure.common import AzureConflictHttpError
 from azure.cosmosdb.table.tableservice import TableService
-from storage.secrets import storage_account, table_connection_string, table_name
+from storage.secrets import storage_account, table_connection_string, table_name, blob_key
 from storage.models import Statuses, NoRecordsToProcessError
 from transcribe.transcribe import TranscriptionStatus
 
 
 class AzureTableDatabase(object):
     def __init__(self):
-        self.connection = TableService(account_name=storage_account, account_key=table_connection_string)
+        self.connection = TableService(account_name=storage_account, account_key=blob_key)
         self.table_name = table_name
 
     def _update_entity(self, record):
