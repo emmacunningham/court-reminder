@@ -43,11 +43,11 @@ class TwilioCallWrapper(object):
         Wait 1 Second
         Send case number
         Wait 1 Second
-        Send 1  [why?]
+        Send 1  [why?] Confirm number
         Wait 1 Second
-        Send 1  [why?]
+        Send 1  [why?] Confirm name
         Wait 1 Second
-        Send 1  [why?]
+        Send 1  [why?] For your next hearing date, press 1
         Wait for 10 seconds
         Send 1  [trick into a repeat so we catch the full message.]
 
