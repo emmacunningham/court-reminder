@@ -95,10 +95,10 @@ class AinView(BaseModelView):
 
     def get_list(self, page, sort_field, sort_desc, search, filters, page_size=20):
         if len(filters) > 0:
-             filter_col, filter_val = filters[0][1], filters[0][2]
-             results = db.query(filter_col, filter_val, page_size)
+            filter_col, filter_val = filters[0][1], filters[0][2]
+            results = db.query(filter_col, filter_val, page_size)
         else:
-             results = db.raw_table(limit=page_size)
+            results = db.raw_table(limit=page_size)
         results = list(results)
         return len(results), results
 
@@ -130,6 +130,7 @@ class AinView(BaseModelView):
     @action('reset_status', 'Reset Status', 'Are you sure you want to reset the selected records?')
     def action_upload(self, ids):
         try:
-            flash('Not implemented yet')
+            db.reset_statuses(ids)
+            # flash('Not implemented yet')
         except Exception as ex:
             flash('Failed to reset the status', 'error')

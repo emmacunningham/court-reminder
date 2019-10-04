@@ -9,7 +9,8 @@ from transcribe.transcribe import TranscriptionStatus
 
 class AzureTableDatabase(object):
     def __init__(self):
-        self.connection = TableService(account_name=storage_account, account_key=blob_key)
+        self.connection = TableService(
+            account_name=storage_account, account_key=blob_key)
         self.table_name = table_name
 
     def _update_entity(self, record):
@@ -24,7 +25,8 @@ class AzureTableDatabase(object):
         """
         Retrieve a list of rows in the table.
         """
-        calls = self.connection.query_entities(self.table_name, num_results=limit)
+        calls = self.connection.query_entities(
+            self.table_name, num_results=limit)
         return calls
 
     def list_calls(self, limit=100, select='PartitionKey'):
@@ -32,14 +34,16 @@ class AzureTableDatabase(object):
         Retrieve a set of records that need a phone call
         """
 
-        calls = self.connection.query_entities(self.table_name, num_results=limit, select=select)
+        calls = self.connection.query_entities(
+            self.table_name, num_results=limit, select=select)
         return [c.PartitionKey for c in calls]
 
     def reset_stale_calls(self, time_limit):
         """
         Retrieve calls that are not done and whose last modified time was older than the limit.
         """
-        records = self.connection.query_entities(self.table_name, filter="LastModified lt datetime'{0}' and Status ne '{1}'".format(time_limit.date(), Statuses.extracting_done))
+        records = self.connection.query_entities(self.table_name, filter="LastModified lt datetime'{0}' and Status ne '{1}'".format(
+            time_limit.date(), Statuses.extracting_done))
         if not records.items:
             raise NoRecordsToProcessError()
         num_records = len(records.items)
@@ -48,17 +52,28 @@ class AzureTableDatabase(object):
             if 'LastErrorStep' in record:
                 record.Status = record.LastErrorStep
                 del record.LastErrorStep
-            record.Status = Statuses.reset_map.get(record.Status, record.Status)
+            record.Status = Statuses.reset_map.get(
+                record.Status, record.Status)
             self._update_entity(record)
 
         return num_records
+
+    def reset_statuses(self, keys):
+        """
+        Reset status for all provided keys
+        """
+        for key in keys:
+            record = self.connection.get_entity(self.table_name, key, key)
+            record.Status = Statuses.new
+            self._update_entity(record)
 
     def retrieve_next_record_for_call(self):
         """
         Retrieve a set of records that need a phone call
         """
 
-        records = self.connection.query_entities(self.table_name, num_results=1, filter="Status eq '{0}'".format(Statuses.new))
+        records = self.connection.query_entities(
+            self.table_name, num_results=1, filter="Status eq '{0}'".format(Statuses.new))
 
         if len(records.items) == 0:
             raise NoRecordsToProcessError()
@@ -72,7 +87,8 @@ class AzureTableDatabase(object):
     def set_error(self, partition_key, step):
         """ Reset a row from error state
         """
-        record = self.connection.get_entity(self.table_name, partition_key, partition_key)
+        record = self.connection.get_entity(
+            self.table_name, partition_key, partition_key)
         record.Status = Statuses.error
         record['LastErrorStep'] = step
         self._update_entity(record)
@@ -123,11 +139,12 @@ class AzureTableDatabase(object):
 
     def query(self, column, value, limit=1):
         records = self.connection.query_entities(self.table_name,
-              num_results=limit, filter="{0} eq '{1}'".format(column, value))
+                                                 num_results=limit, filter="{0} eq '{1}'".format(column, value))
         return records
 
     def retrieve_next_record_for_extraction(self):
-        records = self.connection.query_entities(self.table_name, num_results=1, filter="Status eq '{0}'".format(Statuses.transcribing_done))
+        records = self.connection.query_entities(
+            self.table_name, num_results=1, filter="Status eq '{0}'".format(Statuses.transcribing_done))
         if not records.items:
             raise NoRecordsToProcessError()
 
@@ -138,7 +155,8 @@ class AzureTableDatabase(object):
         return record.CallTranscript, record.PartitionKey
 
     def retrieve_next_record_for_extraction(self):
-        records = self.connection.query_entities(self.table_name, num_results=1, filter="Status eq '{0}'".format(Statuses.transcribing_done))
+        records = self.connection.query_entities(
+            self.table_name, num_results=1, filter="Status eq '{0}'".format(Statuses.transcribing_done))
         if not records.items:
             raise NoRecordsToProcessError()
 
@@ -149,7 +167,8 @@ class AzureTableDatabase(object):
         return record.CallTranscript, record.PartitionKey
 
     def update_location_date(self, case_number, city, location_confidence, state, zipcode, date):
-        record = self.connection.get_entity(self.table_name, case_number, case_number)
+        record = self.connection.get_entity(
+            self.table_name, case_number, case_number)
         record.City = city
         record.LocationConfidence = location_confidence
         record.State = state
@@ -164,21 +183,24 @@ class AzureTableDatabase(object):
         """
 
         for request_id in request_ids:
-            record = {'PartitionKey': request_id, 'RowKey': request_id, 'Status': Statuses.new, 'LastModified': datetime.now()}
+            record = {'PartitionKey': request_id, 'RowKey': request_id,
+                      'Status': Statuses.new, 'LastModified': datetime.now()}
             try:
                 self.connection.insert_entity(self.table_name, record)
             except AzureConflictHttpError:
                 pass  # already exists. silently ignore.
 
     def update_call_id(self, alien_registration_id, call_id):
-        record = self.connection.get_entity(self.table_name, alien_registration_id, alien_registration_id)
+        record = self.connection.get_entity(
+            self.table_name, alien_registration_id, alien_registration_id)
         record.CallID = call_id
         record.Status = Statuses.calling
         record.CallTimestamp = datetime.now()
         self._update_entity(record)
 
     def update_azure_path(self, alien_registration_id, azure_path):
-        record = self.connection.get_entity(self.table_name, alien_registration_id, alien_registration_id)
+        record = self.connection.get_entity(
+            self.table_name, alien_registration_id, alien_registration_id)
         record.Status = Statuses.recording_ready
         record.CallUploadUrl = azure_path
         self._update_entity(record)
