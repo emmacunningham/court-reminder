@@ -115,7 +115,11 @@ class AzureTableDatabase(object):
             partition_key,
             partition_key,
         )
-        if status == TranscriptionStatus.success:
+        if record.CallCount < 3 and (status != TranscriptionStatus.success or len(transcript) < 95):
+            record.CallCount = record.CallCount + 1
+            record.Status = Statuses.new
+            self._update_entity(record)
+        elif status == TranscriptionStatus.success:
             record.CallTranscript = transcript
             record.Status = Statuses.transcribing_done
             record.TranscribeTimestamp = datetime.now()
@@ -185,7 +189,8 @@ class AzureTableDatabase(object):
 
         for request_id in request_ids:
             record = {'PartitionKey': request_id, 'RowKey': request_id,
-                      'Status': Statuses.new, 'LastModified': datetime.now()}
+                      'Status': Statuses.new, 'LastModified': datetime.now(),
+                      'CallCount': 0}
             try:
                 self.connection.insert_entity(self.table_name, record)
             except AzureConflictHttpError:
