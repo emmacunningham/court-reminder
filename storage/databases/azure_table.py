@@ -64,6 +64,7 @@ class AzureTableDatabase(object):
         """
         for key in keys:
             record = self.connection.get_entity(self.table_name, key, key)
+            record.CallCount = 0
             record.Status = Statuses.new
             self._update_entity(record)
 
