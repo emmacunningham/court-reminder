@@ -62,7 +62,8 @@ class TwilioCallWrapper(object):
         # if warning of maintenance:
         # "1w1ww{case_number}ww1w1w1".format(case_number=case_number) + ("w" * 5 * 2) + "1"
 
-        return "1ww{case_number}ww1ww1ww1".format(case_number=case_number)
+        # added more ws, for more waiting
+        return "1wwwwww{case_number}wwwww1wwww1wwww1".format(case_number=case_number)
 
 
     def place_call(self, case_number):

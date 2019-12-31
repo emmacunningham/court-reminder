@@ -64,6 +64,7 @@ class AzureTableDatabase(object):
         """
         for key in keys:
             record = self.connection.get_entity(self.table_name, key, key)
+            record.CallCount = 0
             record.Status = Statuses.new
             self._update_entity(record)
 
@@ -114,7 +115,14 @@ class AzureTableDatabase(object):
             partition_key,
             partition_key,
         )
-        if status == TranscriptionStatus.success:
+        # TODO: we don't really want these checks here, but just testing and seems to get better data. It will re-call twice transcription doesn't succeed, or short, or seems to be the initial phone message:
+        if record.CallCount < 3 and (status != TranscriptionStatus.success or len(transcript) < 95 or transcript.lower().startswith("welcome to the automated case")):
+            # catching less than 95, to re-call for common 11-second/87 character call like: "The alien registration number also known as the anus. You entered 203. DEA number from "
+            print("increasing call count and should try again for " + partition_key)
+            record.CallCount = record.CallCount + 1
+            record.Status = Statuses.new
+            self._update_entity(record)
+        elif status == TranscriptionStatus.success:
             record.CallTranscript = transcript
             record.Status = Statuses.transcribing_done
             record.TranscribeTimestamp = datetime.now()
@@ -184,7 +192,8 @@ class AzureTableDatabase(object):
 
         for request_id in request_ids:
             record = {'PartitionKey': request_id, 'RowKey': request_id,
-                      'Status': Statuses.new, 'LastModified': datetime.now()}
+                      'Status': Statuses.new, 'LastModified': datetime.now(),
+                      'CallCount': 0}
             try:
                 self.connection.insert_entity(self.table_name, record)
             except AzureConflictHttpError:
