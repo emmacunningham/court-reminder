@@ -43,11 +43,11 @@ class TwilioCallWrapper(object):
         Wait 1 Second
         Send case number
         Wait 1 Second
-        Send 1  [why?]
+        Send 1  [why?] Confirm number
         Wait 1 Second
-        Send 1  [why?]
+        Send 1  [why?] Confirm name
         Wait 1 Second
-        Send 1  [why?]
+        Send 1  [why?] For your next hearing date, press 1
         Wait for 10 seconds
         Send 1  [trick into a repeat so we catch the full message.]
 
@@ -62,7 +62,8 @@ class TwilioCallWrapper(object):
         # if warning of maintenance:
         # "1w1ww{case_number}ww1w1w1".format(case_number=case_number) + ("w" * 5 * 2) + "1"
 
-        return "1ww{case_number}ww1ww1ww1".format(case_number=case_number)
+        # added more ws, for more waiting
+        return "1wwwwww{case_number}wwwww1wwww1wwww1".format(case_number=case_number)
 
 
     def place_call(self, case_number):
